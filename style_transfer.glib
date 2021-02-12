@@ -1,0 +1,40 @@
+##OpenGL GLIB
+
+# Set up initial state
+WindowSize 500 500
+LookAt 0 0 3  0 0 0  0 1 0
+
+# Set up textures
+Texture2D 1 500 500		# TU1 holds the exemplar render
+Texture2D 2 500 500		# TU2 holds the normal render
+
+# Phase 1
+RenderToTexture 1
+Perspective 10
+Background 1. 1. 1.
+Clear
+Vertex render_exemplar.vert
+Fragment render_exemplar.frag
+Program render_exemplar 
+Sphere .261 100 100		# fit sphere exactly to window size
+
+# Phase 2
+RenderToTexture 2
+Perspective 90
+Background 0.5 0.1 0.2
+Clear
+Vertex render_normals.vert
+Fragment render_normals.frag
+Program render_normals
+WireTeapot
+
+# Phase 3
+RenderToTexture
+Clear
+Vertex style_transfer.vert
+Fragment style_transfer.frag
+Program style_transfer		\
+		uExemplarUnit 1		\
+		uNormalUnit 2
+Translate 0. 0. 0.
+QuadXY .2 2
