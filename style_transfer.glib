@@ -5,6 +5,7 @@ WindowSize 500 500
 LookAt 0 0 3  0 0 0  0 1 0
 
 # Set up textures
+Texture2D 0 lookup_tex.bmp
 Texture2D 1 500 500		# TU1 holds the exemplar render
 Texture2D 2 500 500		# TU2 holds the normal render
 
@@ -33,8 +34,11 @@ RenderToTexture
 Clear
 Vertex style_transfer.vert
 Fragment style_transfer.frag
-Program style_transfer		\
-		uExemplarUnit 1		\
-		uNormalUnit 2
+Program style_transfer				\
+		uLookupTex 0				\
+		uExemplarTex 1				\
+		uNormalMap 2				\
+		uLevels <0, 6, 12>			\
+		uThreshold <0, 0.08, 0.2>
 Translate 0. 0. 0.
 QuadXY .2 2
