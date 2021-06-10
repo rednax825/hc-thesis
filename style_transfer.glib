@@ -1,44 +1,47 @@
 ##OpenGL GLIB
 
 # Set up initial state
-WindowSize 500 500
+WindowSize 512 512 
 LookAt 0 0 3  0 0 0  0 1 0
 
 # Set up textures
-Texture2D 0 lookup_tex.bmp
-Texture2D 1 500 500		# TU1 holds the exemplar render
-Texture2D 2 500 500		# TU2 holds the normal render
+Texture2D 4 noise_tex.bmp 	# TU4 holds the noise texture
+Texture2D 5 lookup_tex.bmp 	# TU5 holds lookup texture
+#Texture2D 6 512 512 		# TU6 holds the exemplar render
+Texture2D 6 exemplar0.bmp 	# TU6 holds the exemplar texture
+Texture2D 7 512 512 		# TU7 holds the normal render
 
-# Phase 1
-RenderToTexture 1
-Perspective 10
-Background 1. 1. 1.
-Clear
-Vertex render_exemplar.vert
-Fragment render_exemplar.frag
-Program render_exemplar 
-Sphere .261 100 100		# fit sphere exactly to window size
+## Phase 1
+#RenderToTexture 6
+#Perspective 90
+#Background 1. 1. 0.5
+#Clear
+#Vertex render_exemplar.vert
+#Fragment render_exemplar.frag
+#Program render_exemplar 
+#Sphere 2.121 100. 100 		# fit sphere exactly to window size
 
 # Phase 2
-RenderToTexture 2
-Perspective 90
-Background 0.5 0.1 0.2
+RenderToTexture 7
+Background 0.5 0.5 1.
 Clear
 Vertex render_normals.vert
 Fragment render_normals.frag
 Program render_normals
-WireTeapot
+Obj golem.obj
 
 # Phase 3
 RenderToTexture
+Background 0.6 0.2 0.6
 Clear
 Vertex style_transfer.vert
 Fragment style_transfer.frag
 Program style_transfer				\
-		uLookupTex 0				\
-		uExemplarTex 1				\
-		uNormalMap 2				\
+		uNoiseTex 4				\
+		uLookupTex 5				\
+		uExemplarTex 6				\
+		uNormalMap 7				\
 		uLevels <0, 6, 12>			\
-		uThreshold <0, 0.08, 0.2>
-Translate 0. 0. 0.
-QuadXY .2 2
+		uThreshold <0, 0.08, 1.0>		\
+		uNoiseMult <0.0, 1.0, 3.0>
+Sphere 10. 30 30

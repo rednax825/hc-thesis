@@ -1,16 +1,14 @@
 #version 330 compatibility
 
-uniform sampler2D Noise2;
+uniform sampler2D uNoiseTex;
 uniform sampler2D uLookupTex;
 uniform sampler2D uNormalMap;
 uniform sampler2D uExemplarTex;
 uniform int uLevels;
 uniform float uThreshold;
+uniform float uNoiseMult;
 
-in  vec2	vST;	// texture coords
-in  vec3	vN;		// normal vector
-in	vec2	vVC;	// viewport coords
-
+const float DIMENSION = 512.0;
 
 float sum(vec3 a) 
 {
@@ -19,25 +17,24 @@ float sum(vec3 a)
 
 vec3 get_normal_map(vec2 uv)
 {
-	return texture2D(uNormalMap, (uv + vec2(0.5)) / 1024.0).xyz;
+	return texture2D(uNormalMap, (uv + vec2(0.5, 0.5)) / DIMENSION).xyz;
 }
 
 vec3 get_pixel(sampler2D tex, vec2 uv)
 {
-	return texture2D(tex, (uv + vec2(0.5)) / 512.0).xyz;
+	return texture2D(tex, (uv + vec2(0.5, 0.5)) / DIMENSION).xyz;
 }
 
-vec2 lookup(vec3 normal)
+vec2 lookup(vec3 target)
 {
-	return normal.xy * 512.0;
+	return vec2(target.xy) * DIMENSION;
 }
-
 
 // p = pixel coord, h = seed spacing
 vec2 seed_point(vec2 p, float h)
 {
 	vec2 b = floor((p / h));
-	vec2 j = get_pixel(Noise2, b).xy * 0.7;
+	vec2 j = get_pixel(uNoiseTex, b).xy * uNoiseMult;
 	return floor(h * (b + j));
 }
 
@@ -68,7 +65,7 @@ vec3 stylize(vec2 p, int l)
 {
 	vec2 o = lookup(get_normal_map(p));
 	
-	for(int i = l; i > 1; i--)
+	for(int i = l; i > 0; i--)
 	{
 		vec2 q = nearest_seed(p, pow(2.0, i));
 		vec2 u = lookup(get_normal_map(q));
@@ -87,19 +84,12 @@ vec3 stylize(vec2 p, int l)
 
 void main( )
 {
-	vec2 p = gl_FragCoord.xy - vec2(0.5);
+	// get range from 0.0 to 1.0 in xy
+	vec2 p = gl_FragCoord.xy - vec2(0.5, 0.5);
 
 	vec3 myColor = vec3(0.0, 0.0, 0.0);
 
 	myColor = stylize(p, uLevels);
-
-	//myColor = get_normal_map(p);
-
-	//myColor = texture2D(uExemplarTex, gl_FragCoord.xy / 512.0).rgb;
-
-	//vec2 nearest = nearest_seed(p, 64);
-	//myColor = get_pixel(uNoiseTex, nearest).rgb;
-	//if( length(p-nearest) < 2) myColor = vec3(1.0, 0, 0);
 
 	gl_FragColor = vec4( myColor,  1. );
 }
