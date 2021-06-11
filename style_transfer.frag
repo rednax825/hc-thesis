@@ -3,7 +3,8 @@
 uniform sampler2D uNoiseTex;
 uniform sampler2D uLookupTex;
 uniform sampler2D uNormalMap;
-uniform sampler2D uExemplarTex;
+uniform sampler3D uExemplarTex;
+uniform sampler2D uLightLevel;
 uniform int uLevels;
 uniform float uThreshold;
 uniform float uNoiseMult;
@@ -23,6 +24,13 @@ vec3 get_normal_map(vec2 uv)
 vec3 get_pixel(sampler2D tex, vec2 uv)
 {
 	return texture2D(tex, (uv + vec2(0.5, 0.5)) / DIMENSION).xyz;
+}
+
+vec3 get_pixel3d(sampler3D tex, vec2 uv, float depth)
+{
+	vec2 pos = (uv + vec2(0.5, 0.5)) / DIMENSION;
+	vec3 pos3d = vec3(pos.x, pos.y, depth);
+	return texture3D(tex, pos3d).xyz;
 }
 
 vec2 lookup(vec3 target)
@@ -79,7 +87,9 @@ vec3 stylize(vec2 p, int l)
 		}
 	}
 
-	return get_pixel(uExemplarTex, o).xyz;
+	float brightness = get_pixel(uLightLevel, p).x;
+	brightness = 1. - ((floor(brightness * 8.) / 9.) + 0.0625);
+	return get_pixel3d(uExemplarTex, o, brightness).xyz;
 }
 
 void main( )

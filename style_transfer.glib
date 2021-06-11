@@ -8,8 +8,9 @@ LookAt 0 0 3  0 0 0  0 1 0
 Texture2D 4 noise_tex.bmp 	# TU4 holds the noise texture
 Texture2D 5 lookup_tex.bmp 	# TU5 holds lookup texture
 #Texture2D 6 512 512 		# TU6 holds the exemplar render
-Texture2D 6 exemplar0.bmp 	# TU6 holds the exemplar texture
+Texture3D 6 output.tex #exemplar0.bmp 	# TU6 holds the exemplar texture
 Texture2D 7 512 512 		# TU7 holds the normal render
+Texture2D 8 512 512		# TU8 holds the brightness
 
 ## Phase 1
 #RenderToTexture 6
@@ -31,6 +32,22 @@ Program render_normals
 Obj golem.obj
 
 # Phase 3
+RenderToTexture 8
+Background 0. 0. 0.
+Clear
+Vertex lighting.vert
+Fragment lighting.frag
+Program lighting			\
+	uLightX	<-5., 2., 5>		\
+	uLightY	<-5., 3., 5>		\
+	uLightZ	<-5., 3., 5>		\
+	uAmbient <0., 0.5, 1.>		\
+	uSpec <0., 0.5, 1.>		\
+	uShine <0., 0.5, 1.>		\
+	uDiffuse <0., 0.5, 1.>
+Obj golem.obj
+
+# Phase 4
 RenderToTexture
 Background 0.6 0.2 0.6
 Clear
@@ -41,6 +58,7 @@ Program style_transfer				\
 		uLookupTex 5				\
 		uExemplarTex 6				\
 		uNormalMap 7				\
+		uLightLevel 8				\
 		uLevels <0, 6, 12>			\
 		uThreshold <0, 0.08, 1.0>		\
 		uNoiseMult <0.0, 1.0, 3.0>
