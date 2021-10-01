@@ -8,6 +8,7 @@ uniform sampler2D uLightLevel;
 uniform int uLevels;
 uniform float uThreshold;
 uniform float uNoiseMult;
+uniform int uTexLayers;
 
 const float DIMENSION = 512.0;
 
@@ -71,6 +72,7 @@ vec2 nearest_seed(vec2 p, float h)
 // p = pixel coord, l = number of levels
 vec3 stylize(vec2 p, int l)
 {
+	//vec2 o = vec2(0, 0);
 	vec2 o = lookup(get_normal_map(p));
 	
 	for(int i = l; i > 0; i--)
@@ -83,12 +85,20 @@ vec3 stylize(vec2 p, int l)
 		if(err < uThreshold)
 		{
 			o = u+(p-q);
+			
 			break;
 		}
 	}
+	
+	//if(length(o) < 1) {
+	//	return vec3(1.0, 0.0, 0.0);
+	//}
+
+	float texLayers = float(uTexLayers);
+	float adjuster = 0.5 / (texLayers + 1.0);
 
 	float brightness = get_pixel(uLightLevel, p).x;
-	brightness = 1. - ((floor(brightness * 8.) / 9.) + 0.0625);
+	brightness = 1.0 - ((floor(brightness * texLayers) / (texLayers + 1.0)) + adjuster);
 	return get_pixel3d(uExemplarTex, o, brightness).xyz;
 }
 

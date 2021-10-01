@@ -8,7 +8,8 @@ LookAt 0 0 3  0 0 0  0 1 0
 Texture2D 4 noise_tex.bmp 	# TU4 holds the noise texture
 Texture2D 5 lookup_tex.bmp 	# TU5 holds lookup texture
 #Texture2D 6 512 512 		# TU6 holds the exemplar render
-Texture3D 6 output.tex #exemplar0.bmp 	# TU6 holds the exemplar texture
+Texture3D 6 exemplar_artistic2_2.tex	 	# TU6 holds the exemplar texture
+Nearest
 Texture2D 7 512 512 		# TU7 holds the normal render
 Texture2D 8 512 512		# TU8 holds the brightness
 
@@ -41,9 +42,9 @@ Program lighting			\
 	uLightX	<-5., 2., 5>		\
 	uLightY	<-5., 3., 5>		\
 	uLightZ	<-5., 3., 5>		\
-	uAmbient <0., 0.5, 1.>		\
-	uSpec <0., 0.5, 1.>		\
-	uShine <0., 0.5, 1.>		\
+	uAmbient <0., 0.2, 1.>		\
+	uSpec <0., 0.25, 1.>		\
+	uShine <0., 0.7, 1.>		\
 	uDiffuse <0., 0.5, 1.>
 Obj golem.obj
 
@@ -61,5 +62,6 @@ Program style_transfer				\
 		uLightLevel 8				\
 		uLevels <0, 6, 12>			\
 		uThreshold <0, 0.08, 1.0>		\
-		uNoiseMult <0.0, 1.0, 3.0>
+		uNoiseMult <0.0, 1.0, 3.0>		\
+		uTexLayers <0, 9, 20>
 Sphere 10. 30 30
