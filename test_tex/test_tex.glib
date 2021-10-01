@@ -1,0 +1,16 @@
+##OpenGL GLIB
+
+WindowSize 512 512
+Perspective 90
+LookAt 0 0 2  0 0 0  0 1 0
+
+Texture3D 5 output.tex
+
+Vertex   test_tex.vert
+Fragment test_tex.frag
+Program  Test_Tex				\
+	uDepth <.0 .0 1.0>          \
+	uN <.0 6.0 10.0>            \
+	uTex 5
+
+Sphere 10. 50 50

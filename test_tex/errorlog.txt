@@ -1,0 +1,4 @@
+
+0(19) : error C0000: syntax error, unexpected ';', expecting ',' or ')' at token ";"
+0(20) : error C1503: undefined variable "pos"
+
